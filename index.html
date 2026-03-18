@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inferis Labs — Turning Intelligence Into Outcomes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+
+/* ─── TOKENS ─── */
+:root{
+  --w:       #FAFAF8;
+  --w2:      #F3F1EC;
+  --w3:      #E9E6DF;
+  --ink:     #111110;
+  --ink2:    #3A3935;
+  --ink3:    #7A7870;
+  --ink4:    #AEAB9F;
+  --green:   #2D4A3E;
+  --green2:  #3D6355;
+  --greenbg: rgba(45,74,62,.06);
+  --line:    rgba(17,17,16,.09);
+  --max:     1100px;
+  --gap:     clamp(1.5rem,5vw,4rem);
+}
+
+/* ─── RESET ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--w);
+  color:var(--ink);
+  font-family:'Geist',sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+::selection{background:var(--greenbg);color:var(--green)}
+
+/* ─── SHARED ─── */
+.W{max-width:var(--max);margin:0 auto;padding-inline:var(--gap)}
+.mono{font-family:'Geist Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase}
+.eyebrow{color:var(--green);margin-bottom:1.5rem;display:block}
+
+/* ─── NAV ─── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:800;
+  border-bottom:1px solid transparent;
+  transition:background .35s,border-color .35s;
+}
+#nav.pinned{
+  background:rgba(250,250,248,.94);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom-color:var(--line);
+}
+.nav-inner{
+  max-width:var(--max);margin:0 auto;
+  padding:1.25rem var(--gap);
+  display:flex;align-items:center;justify-content:space-between;gap:2rem;
+}
+.brand{display:flex;align-items:center;gap:.6rem}
+.brand-mark{width:20px;height:23px;flex-shrink:0}
+.brand-name{
+  font-family:'Fraunces',serif;
+  font-weight:500;font-size:1.05rem;
+  letter-spacing:.01em;color:var(--ink);
+}
+.brand-name b{color:var(--green);font-weight:500}
+#nav-list{display:flex;align-items:center;gap:2rem;list-style:none}
+#nav-list a{
+  font-size:.78rem;font-weight:400;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink3);transition:color .2s;position:relative;
+}
+#nav-list a::after{
+  content:'';position:absolute;left:0;bottom:-2px;
+  width:0;height:1px;background:var(--green);
+  transition:width .25s;
+}
+#nav-list a:hover{color:var(--ink)}
+#nav-list a:hover::after{width:100%}
+.nav-cta{
+  font-family:'Geist',sans-serif;
+  font-size:.78rem;font-weight:500;
+  letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid var(--ink);color:var(--ink);
+  background:transparent;padding:.45rem 1.2rem;
+  cursor:pointer;transition:all .2s;
+  display:inline-block;white-space:nowrap;
+}
+.nav-cta:hover{background:var(--green);border-color:var(--green);color:var(--w)}
+
+/* hamburger */
+#hbtn{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:3px}
+#hbtn span{display:block;width:20px;height:1.5px;background:var(--ink);transition:all .3s;transform-origin:center}
+#hbtn.o span:nth-child(1){transform:rotate(45deg) translate(4.5px,4.5px)}
+#hbtn.o span:nth-child(2){opacity:0}
+#hbtn.o span:nth-child(3){transform:rotate(-45deg) translate(4.5px,-4.5px)}
+#panel{
+  position:fixed;inset:0;z-index:790;
+  background:var(--w);
+  display:flex;flex-direction:column;
+  justify-content:center;padding:3rem var(--gap);
+  visibility:hidden;opacity:0;
+  transition:opacity .35s,visibility .35s;
+}
+#panel.o{visibility:visible;opacity:1}
+#panel ul{list-style:none;display:flex;flex-direction:column;gap:1.5rem;margin-bottom:2.5rem}
+#panel ul a{
+  font-family:'Fraunces',serif;
+  font-size:clamp(1.75rem,6vw,2.5rem);
+  font-weight:300;color:var(--ink2);
+  transition:color .2s;
+}
+#panel ul a:hover{color:var(--green)}
+
+@media(max-width:768px){
+  #nav-list,.nav-cta{display:none}
+  #hbtn{display:flex}
+}
+
+/* ─── HERO ─── */
+#hero{
+  min-height:100svh;
+  display:flex;flex-direction:column;
+  justify-content:flex-end;
+  padding-top:7rem;
+  background:var(--w);
+  position:relative;
+}
+.hero-body{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center;padding-block:4rem 2rem}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:.65rem;
+  margin-bottom:2.5rem;
+}
+.hero-tag-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.hero-tag-text{font-size:.72rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+h1.hero-hl{
+  font-family:'Fraunces',serif;
+  font-optical-sizing:auto;
+  font-weight:300;
+  font-size:clamp(3.25rem,8.5vw,8rem);
+  line-height:.96;
+  letter-spacing:-.02em;
+  color:var(--ink);
+  margin-bottom:3rem;
+  max-width:16ch;
+}
+h1.hero-hl em{font-style:italic;color:var(--green)}
+.hero-foot{
+  border-top:1px solid var(--line);
+  padding:2rem 0 3.5rem;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:3rem;
+  align-items:center;
+  position:relative;z-index:1;
+}
+.hero-desc{font-size:1.05rem;color:var(--ink2);line-height:1.85;max-width:46ch}
+.hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:flex-end}
+
+/* ─── BTNS ─── */
+.btn-fill{
+  font-family:'Geist',sans-serif;
+  font-size:.78rem;font-weight:500;
+  letter-spacing:.07em;text-transform:uppercase;
+  background:var(--green);color:var(--w);
+  border:1px solid var(--green);
+  padding:.75rem 1.75rem;cursor:pointer;
+  transition:background .2s,border-color .2s;
+  display:inline-block;
+}
+.btn-fill:hover{background:var(--ink);border-color:var(--ink)}
+.btn-line{
+  font-family:'Geist',sans-serif;
+  font-size:.78rem;font-weight:400;
+  letter-spacing:.07em;text-transform:uppercase;
+  background:transparent;color:var(--ink2);
+  border:1px solid var(--line);
+  padding:.75rem 1.75rem;cursor:pointer;
+  transition:border-color .2s,color .2s;
+  display:inline-block;
+}
+.btn-line:hover{border-color:var(--ink);color:var(--ink)}
+
+/* ─── STATS ─── */
+#stats{
+  background:var(--w2);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:3rem 2rem;border-right:1px solid var(--line)}
+.stat:last-child{border-right:none}
+.stat-n{
+  font-family:'Fraunces',serif;
+  font-weight:300;font-size:3.5rem;
+  line-height:1;color:var(--green);
+  display:block;margin-bottom:.4rem;
+}
+.stat-l{font-size:.8rem;color:var(--ink3);line-height:1.5;max-width:14ch}
+
+/* ─── SECTION BASE ─── */
+.sec{padding-block:clamp(5rem,10vw,8rem)}
+.sec-alt{background:var(--w2)}
+
+.sec-intro{
+  display:grid;
+  grid-template-columns:1fr 2fr;
+  gap:4rem;
+  align-items:end;
+  border-bottom:1px solid var(--line);
+  padding-bottom:3rem;
+  margin-bottom:3.5rem;
+}
+.sec-label{color:var(--green);margin-bottom:.5rem;display:block}
+.sec-h{
+  font-family:'Fraunces',serif;
+  font-weight:300;
+  font-size:clamp(2.5rem,5vw,3.75rem);
+  line-height:1.05;
+  letter-spacing:-.02em;
+}
+.sec-h em{font-style:italic}
+.sec-sub{font-size:1.05rem;color:var(--ink2);line-height:1.85;max-width:52ch}
+
+/* ─── SERVICES ─── */
+.svc-list{border-top:1px solid var(--line)}
+.svc{
+  display:grid;
+  grid-template-columns:2.5rem 1fr 1fr;
+  gap:1.5rem 3rem;
+  padding:2rem 0;
+  border-bottom:1px solid var(--line);
+  transition:background .15s;
+}
+.svc:hover{background:var(--greenbg);margin-inline:-1rem;padding-inline:1rem}
+.svc-i{
+  font-family:'Geist Mono',monospace;
+  font-size:.65rem;color:var(--ink4);
+  letter-spacing:.08em;padding-top:.3rem;
+}
+.svc-h{
+  font-family:'Fraunces',serif;
+  font-weight:400;font-size:1.35rem;
+  color:var(--ink);line-height:1.25;
+}
+.svc-p{font-size:.95rem;color:var(--ink2);line-height:1.85}
+
+/* ─── WORK ─── */
+.work-list{border-top:1px solid var(--line)}
+.work-item{
+  display:grid;
+  grid-template-columns:13rem 1fr;
+  gap:2rem 4rem;
+  padding:3rem 0;
+  border-bottom:1px solid var(--line);
+}
+.work-left{}
+.work-badge{
+  display:inline-block;
+  font-family:'Geist Mono',monospace;
+  font-size:.6rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--green);
+  border:1px solid rgba(45,74,62,.25);
+  padding:.18rem .55rem;margin-bottom:.75rem;
+}
+.work-num{
+  font-family:'Geist Mono',monospace;
+  font-size:.6rem;color:var(--ink4);letter-spacing:.08em;
+}
+.work-h{
+  font-family:'Fraunces',serif;
+  font-weight:400;font-size:1.75rem;
+  line-height:1.15;color:var(--ink);margin-bottom:1rem;
+}
+.work-p{font-size:.95rem;color:var(--ink2);line-height:1.85;margin-bottom:1rem}
+.work-result{
+  font-size:.95rem;font-style:italic;
+  color:var(--ink);line-height:1.75;
+  border-left:2px solid var(--green);
+  padding-left:1rem;margin-bottom:1rem;
+}
+.work-stack{display:flex;flex-wrap:wrap;gap:.3rem}
+.stag{
+  font-family:'Geist Mono',monospace;
+  font-size:.58rem;letter-spacing:.04em;
+  color:var(--ink3);
+  border:1px solid var(--line);
+  padding:.15rem .5rem;
+}
+
+/* ─── TEAM ─── */
+.founders{display:grid;grid-template-columns:1fr 1fr;gap:3rem}
+.founder{border-top:1.5px solid var(--ink);padding-top:2rem}
+.founder-photo{width:64px;height:64px;border-radius:50%;overflow:hidden;border:1px solid var(--line);margin-bottom:1.25rem}
+.founder-photo img{width:100%;height:100%;object-fit:cover}
+.founder-nophoto{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--w3);border:1px solid var(--line);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:.2rem;margin-bottom:1.25rem;
+}
+.founder-nophoto svg{opacity:.28}
+.founder-nophoto span{
+  font-family:'Geist Mono',monospace;
+  font-size:.48rem;color:var(--ink4);
+  letter-spacing:.05em;text-align:center;
+}
+.founder-role{
+  font-family:'Geist Mono',monospace;
+  font-size:.62rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--green);
+  margin-bottom:.4rem;
+}
+.founder-name{
+  font-family:'Fraunces',serif;
+  font-weight:400;font-size:1.6rem;
+  line-height:1.15;color:var(--ink);
+  margin-bottom:.35rem;
+}
+.founder-tagline{font-size:.9rem;font-style:italic;color:var(--ink3);margin-bottom:1.1rem;line-height:1.55}
+.founder-bio{font-size:.93rem;color:var(--ink2);line-height:1.9;margin-bottom:1.25rem}
+.founder-skills{display:flex;flex-wrap:wrap;gap:.3rem}
+.sk{
+  font-family:'Geist Mono',monospace;font-size:.58rem;
+  letter-spacing:.04em;color:var(--ink3);
+  border:1px solid var(--line);padding:.15rem .5rem;
+}
+
+/* ─── CONTACT ─── */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+.contact-eyebrow{color:var(--green);display:block;margin-bottom:1.25rem}
+.contact-h{
+  font-family:'Fraunces',serif;
+  font-weight:300;
+  font-size:clamp(2rem,4vw,3rem);
+  line-height:1.1;letter-spacing:-.015em;
+  margin-bottom:1.25rem;
+}
+.contact-h em{font-style:italic}
+.contact-desc{font-size:.9rem;color:var(--ink2);line-height:1.85;margin-bottom:1.75rem;max-width:38ch}
+.contact-detail{display:flex;align-items:center;gap:.7rem;font-size:.85rem;color:var(--ink2);margin-bottom:.6rem}
+.contact-detail svg{flex-shrink:0;color:var(--green)}
+.contact-detail a:hover{color:var(--green)}
+
+/* form */
+.cform{display:flex;flex-direction:column;gap:.85rem}
+.crow{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.cf{display:flex;flex-direction:column;gap:.28rem}
+.cf label{
+  font-family:'Geist Mono',monospace;
+  font-size:.58rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink3);
+}
+.cf input,.cf textarea{
+  background:transparent;
+  border:none;border-bottom:1px solid var(--line);
+  color:var(--ink);font-family:'Geist',sans-serif;
+  font-size:.92rem;font-weight:300;
+  padding:.55rem 0;outline:none;
+  transition:border-color .2s;
+  width:100%;resize:none;
+}
+.cf input:focus,.cf textarea:focus{border-bottom-color:var(--green)}
+.cf input::placeholder,.cf textarea::placeholder{color:var(--ink4)}
+.csub{
+  margin-top:.5rem;align-self:flex-start;
+  font-family:'Geist',sans-serif;
+  font-size:.78rem;font-weight:500;
+  letter-spacing:.07em;text-transform:uppercase;
+  background:var(--green);color:var(--w);
+  border:1px solid var(--green);
+  padding:.75rem 2rem;cursor:pointer;
+  transition:background .2s,border-color .2s;
+}
+.csub:hover{background:var(--ink);border-color:var(--ink)}
+.csub:disabled{opacity:.5;cursor:not-allowed}
+
+/* ─── FOOTER ─── */
+footer{
+  border-top:1px solid var(--line);
+  padding-block:2rem;
+  background:var(--w);
+}
+.footer-row{
+  display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:1rem;
+}
+.footer-brand{
+  font-family:'Fraunces',serif;
+  font-weight:400;font-size:.95rem;color:var(--ink);
+}
+.footer-links{display:flex;gap:1.5rem;list-style:none;flex-wrap:wrap}
+.footer-links a{
+  font-size:.72rem;font-weight:400;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink4);transition:color .2s;
+}
+.footer-links a:hover{color:var(--ink)}
+.footer-copy{font-size:.72rem;color:var(--ink4)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .sec-intro{grid-template-columns:1fr;gap:1.5rem}
+  .svc{grid-template-columns:2rem 1fr;gap:1rem 2rem}
+  .svc-p{grid-column:2}
+  .work-item{grid-template-columns:1fr;gap:1.25rem}
+  .founders{grid-template-columns:1fr;gap:2.5rem}
+  .contact-grid{grid-template-columns:1fr;gap:3rem}
+  .crow{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .stat{border-bottom:1px solid var(--line)}
+  .stat:nth-child(odd){border-right:1px solid var(--line)}
+  .stat:nth-child(even){border-right:none}
+  .stat:nth-last-child(-n+2){border-bottom:none}
+  .hero-foot{grid-template-columns:1fr;gap:1.5rem}
+  .hero-actions{justify-content:flex-start}
+  h1.hero-hl{font-size:clamp(2.75rem,12vw,4rem)}
+}
+@media(max-width:480px){
+  .hero-actions{flex-direction:column}
+  .btn-fill,.btn-line{text-align:center;width:100%}
+}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="brand">
+      <!--
+        INFERIS MARK — concept: the inference operator.
+        Two parallel bars at top (premises) converging
+        through a diagonal slash into a single dot below
+        (the conclusion). Reads as ∴ (therefore) — the
+        oldest symbol of logical inference. Deconstructed
+        into a clean geometric I-form.
+      -->
+      <svg class="brand-mark" viewBox="0 0 28 32" fill="none" aria-hidden="true">
+        <!-- Top bar: left premise -->
+        <line x1="3" y1="4" x2="13" y2="4" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Top bar: right premise -->
+        <line x1="15" y1="4" x2="25" y2="4" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Left convergence line -->
+        <line x1="5" y1="4" x2="14" y2="26" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Right convergence line -->
+        <line x1="23" y1="4" x2="14" y2="26" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Conclusion dot -->
+        <circle cx="14" cy="29" r="2.2" fill="var(--green)"/>
+      </svg>
+      <span class="brand-name">Inferis <b>Labs</b></span>
+    </a>
+    <ul id="nav-list">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <a href="#contact" class="nav-cta">Get in Touch</a>
+      <button id="hbtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE PANEL -->
+<div id="panel" role="dialog" aria-label="Navigation">
+  <ul>
+    <li><a href="#services" class="pl">Services</a></li>
+    <li><a href="#work" class="pl">Work</a></li>
+    <li><a href="#team" class="pl">Team</a></li>
+    <li><a href="#contact" class="pl">Contact</a></li>
+  </ul>
+  <a href="#contact" class="btn-fill pl">Get in Touch</a>
+</div>
+
+<main>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="W hero-body">
+    <div class="hero-tag">
+      <span class="hero-tag-dot"></span>
+      <span class="hero-tag-text mono">Boutique AI · ML Consultancy · Seattle</span>
+    </div>
+    <h1 class="hero-hl">
+      We Build AI<br>
+      That Works<br>
+      <em>In the Real<br>World.</em>
+    </h1>
+  </div>
+  <div class="W hero-foot">
+    <p class="hero-desc">Two senior engineers. A decade of combined experience across LLMs, agentic AI, computer vision, and data science. No templates, no juniors — just precise systems built for your problem.</p>
+    <div class="hero-actions">
+      <a href="#work" class="btn-fill">Explore Our Work</a>
+      <a href="#contact" class="btn-line">Book a Discovery Call</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="W">
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-n">5+</span>
+        <p class="stat-l">Years experience, each founder</p>
+      </div>
+      <div class="stat">
+        <span class="stat-n">20+</span>
+        <p class="stat-l">AI/ML projects delivered</p>
+      </div>
+      <div class="stat">
+        <span class="stat-n">4</span>
+        <p class="stat-l">Core specialisation domains</p>
+      </div>
+      <div class="stat">
+        <span class="stat-n">2</span>
+        <p class="stat-l">Senior founders. Zero juniors.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="sec">
+  <div class="W">
+    <div class="sec-intro">
+      <div>
+        <span class="mono sec-label eyebrow">Services</span>
+      </div>
+      <div>
+        <h2 class="sec-h">Intelligence, engineered<br><em>to fit your business.</em></h2>
+        <p class="sec-sub" style="margin-top:.85rem">Every engagement starts with your problem — not our catalogue. We architect, build, and deploy AI solutions grounded in engineering rigour and business reality.</p>
+      </div>
+    </div>
+    <div class="svc-list">
+      <div class="svc">
+        <span class="svc-i">01</span>
+        <div class="svc-h">Generative AI &amp; LLM Engineering</div>
+        <p class="svc-p">Custom LLM pipelines, RAG systems, prompt engineering at scale, and fine-tuning workflows — built for production reliability, not demo environments.</p>
+      </div>
+      <div class="svc">
+        <span class="svc-i">02</span>
+        <div class="svc-h">Agentic AI Systems</div>
+        <p class="svc-p">Multi-agent architectures that reason, plan, and act autonomously — using LangGraph, AutoGen, and custom orchestration layers for complex, long-horizon workflows.</p>
+      </div>
+      <div class="svc">
+        <span class="svc-i">03</span>
+        <div class="svc-h">Computer Vision Solutions</div>
+        <p class="svc-p">Object detection, image classification, and custom vision pipelines for quality inspection, document analysis, and real-time inference — edge or cloud.</p>
+      </div>
+      <div class="svc">
+        <span class="svc-i">04</span>
+        <div class="svc-h">MLOps &amp; AI Infrastructure</div>
+        <p class="svc-p">End-to-end ML platforms: model versioning, experiment tracking, CI/CD for ML, scalable inference with vLLM/Triton, and cloud-native deployments on AWS, GCP, or Azure.</p>
+      </div>
+      <div class="svc">
+        <span class="svc-i">05</span>
+        <div class="svc-h">Intelligent Document Processing</div>
+        <p class="svc-p">Automated extraction, classification, and structuring of unstructured documents — contracts, invoices, reports — using LLMs and custom NLP pipelines.</p>
+      </div>
+      <div class="svc">
+        <span class="svc-i">06</span>
+        <div class="svc-h">Data Science &amp; Predictive Analytics</div>
+        <p class="svc-p">Statistical modelling, forecasting, and decision intelligence systems that surface actionable insights from complex datasets — for business and technical stakeholders alike.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work" class="sec sec-alt">
+  <div class="W">
+    <div class="sec-intro">
+      <div>
+        <span class="mono sec-label eyebrow">Selected Work</span>
+      </div>
+      <div>
+        <h2 class="sec-h">Problems<br><em>we've solved.</em></h2>
+        <p class="sec-sub" style="margin-top:.85rem">Real-world AI/ML systems designed and delivered across industries, scales, and technical domains.</p>
+      </div>
+    </div>
+    <div class="work-list">
+
+      <div class="work-item">
+        <div class="work-left">
+          <div class="work-badge">Agentic AI</div>
+          <div class="work-num">Case 01</div>
+        </div>
+        <div>
+          <div class="work-h">Autonomous Document Intelligence Platform</div>
+          <p class="work-p">A mid-sized enterprise needed to process thousands of PDFs — contracts, reports, invoices — extracting structured data and routing it into a downstream ERP. Manual processing was costing 400+ hours monthly.</p>
+          <div class="work-result">4-agent LLM pipeline with a self-hosted 32B parameter model — 87% reduction in processing time, 94% field extraction accuracy on unseen document types.</div>
+          <div class="work-stack">
+            <span class="stag">LangGraph</span><span class="stag">vLLM</span><span class="stag">Ollama</span><span class="stag">AWS</span><span class="stag">FastAPI</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-item">
+        <div class="work-left">
+          <div class="work-badge">Generative AI</div>
+          <div class="work-num">Case 02</div>
+        </div>
+        <div>
+          <div class="work-h">RAG-Powered Internal Knowledge Assistant</div>
+          <p class="work-p">A research organisation's institutional knowledge was siloed across hundreds of internal reports and datasets. Analysts spent hours searching for information that already existed in the corpus.</p>
+          <div class="work-result">Production RAG system with semantic chunking, hybrid retrieval, and a custom re-ranking layer — 60% reduction in research time, sub-3-second responses across 50,000 documents.</div>
+          <div class="work-stack">
+            <span class="stag">LLM</span><span class="stag">FAISS</span><span class="stag">Sentence Transformers</span><span class="stag">Ollama</span><span class="stag">Python</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-item">
+        <div class="work-left">
+          <div class="work-badge">MLOps</div>
+          <div class="work-num">Case 03</div>
+        </div>
+        <div>
+          <div class="work-h">End-to-End ML Pipeline for Predictive Maintenance</div>
+          <p class="work-p">A manufacturing client experiencing costly unplanned equipment downtime. Historical sensor data existed but had never been used predictively. No in-house ML capability whatsoever.</p>
+          <div class="work-result">Full MLOps pipeline — data ingestion, feature engineering, model training, real-time inference API — 40% reduction in unplanned downtime within three months.</div>
+          <div class="work-stack">
+            <span class="stag">PyTorch</span><span class="stag">MLflow</span><span class="stag">Kafka</span><span class="stag">AWS SageMaker</span><span class="stag">FastAPI</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team" class="sec">
+  <div class="W">
+    <div class="sec-intro">
+      <div>
+        <span class="mono sec-label eyebrow">The Team</span>
+      </div>
+      <div>
+        <h2 class="sec-h">Built by engineers.<br><em>Run by engineers.</em></h2>
+        <p class="sec-sub" style="margin-top:.85rem">Founded by two AI/ML engineers with over five years each of hands-on industry experience — building, deploying, and scaling real AI systems at the intersection of research and production.</p>
+      </div>
+    </div>
+    <div class="founders">
+
+      <div class="founder">
+        <div class="founder-photo">
+          <!-- Replace ./Aditya.jpg with the actual path to Aditya's photo -->
+          <img src="./Aditya.jpg" alt="Aditya — Co-Founder, Inferis Labs">
+        </div>
+        <div class="founder-role">Co-Founder · AI/ML Engineer</div>
+        <div class="founder-name">Aditya</div>
+        <p class="founder-tagline">Generative AI · Agentic Systems · ML Infrastructure</p>
+        <p class="founder-bio">Aditya is a Master's student in Artificial Intelligence at Boston University with an undergraduate degree from IIT Kharagpur. He brings four years of experience in investment banking at Barclays, combining analytical rigour with a research-driven approach to AI and engineering. He is passionate about building innovative, end-to-end AI solutions — bridging research-based analysis with real-world production systems.</p>
+        <div class="founder-skills">
+          <span class="sk">Generative AI</span><span class="sk">LLM Engineering</span><span class="sk">RAG</span><span class="sk">Agentic AI</span><span class="sk">MLOps</span><span class="sk">AWS</span><span class="sk">Python</span><span class="sk">PyTorch</span><span class="sk">vLLM</span><span class="sk">NLP</span>
+        </div>
+      </div>
+
+      <div class="founder">
+        <div class="founder-nophoto" role="img" aria-label="Photo coming soon">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="var(--ink)" stroke-width="1.2" aria-hidden="true">
+            <circle cx="16" cy="11" r="5"/><path d="M4 28c0-6.627 5.373-12 12-12s12 5.373 12 12"/>
+          </svg>
+          <span>Photo soon</span>
+        </div>
+        <div class="founder-role">Co-Founder · AI/ML Engineer</div>
+        <div class="founder-name">Stealth</div>
+        <p class="founder-tagline">MLLM · Agentic AI · Rapid Prototyping</p>
+        <p class="founder-bio">With over 5 years of field experience delivering machine learning and data science solutions, this founder brings expertise in computer vision systems, predictive modelling, and end-to-end data pipelines — working across industries including healthcare, manufacturing, and fintech. Combines rigorous mathematical foundations with production engineering pragmatism.</p>
+        <div class="founder-skills">
+          <span class="sk">Machine Learning</span><span class="sk">Computer Vision</span><span class="sk">Data Science</span><span class="sk">Deep Learning</span><span class="sk">PyTorch</span><span class="sk">TensorFlow</span><span class="sk">Scikit-learn</span><span class="sk">GCP</span><span class="sk">Azure</span><span class="sk">SQL</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="sec sec-alt">
+  <div class="W">
+    <div class="contact-grid">
+      <div>
+        <span class="mono contact-eyebrow eyebrow">Get in Touch</span>
+        <h2 class="contact-h">Have a problem<br><em>worth solving?</em></h2>
+        <p class="contact-desc">We work with a small number of clients at any time — because doing this well requires focus. Tell us about your challenge. The first conversation is always free.</p>
+        <div class="contact-detail">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="1" y="3" width="14" height="10" rx="1.5"/><polyline points="1,3.5 8,9 15,3.5"/></svg>
+          <a href="mailto:hello@inferislabs.ai">hello@inferislabs.ai</a>
+        </div>
+        <div class="contact-detail">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M8 1C5.239 1 3 3.239 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.761-2.239-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>
+          <span>Seattle, WA · Remote Worldwide</span>
+        </div>
+      </div>
+      <form class="cform" action="https://formspree.io/f/xaqplrjd" method="POST">
+        <div class="crow">
+          <div class="cf"><label for="fn">Name</label><input type="text" id="fn" name="name" placeholder="Your name" required autocomplete="name"></div>
+          <div class="cf"><label for="fe">Email</label><input type="email" id="fe" name="email" placeholder="you@company.com" required autocomplete="email"></div>
+        </div>
+        <div class="cf"><label for="fo">Organisation</label><input type="text" id="fo" name="organisation" placeholder="Company or project name" autocomplete="organization"></div>
+        <div class="cf"><label for="fm">Your Challenge</label><textarea id="fm" name="message" rows="5" placeholder="Tell us about your challenge — the more specific, the better." required></textarea></div>
+        <button type="submit" class="csub">Send Message →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="W footer-row">
+    <span class="footer-brand">Inferis Labs</span>
+    <ul class="footer-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <span class="footer-copy">© 2025 Inferis Labs</span>
+  </div>
+</footer>
+
+<script>
+/* NAV */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('pinned',scrollY>50),{passive:true});
+
+/* HAMBURGER */
+const hbtn=document.getElementById('hbtn'),panel=document.getElementById('panel');
+hbtn.addEventListener('click',()=>{
+  const o=hbtn.classList.toggle('o');
+  panel.classList.toggle('o',o);
+  hbtn.setAttribute('aria-expanded',o);
+  document.body.style.overflow=o?'hidden':'';
+});
+document.querySelectorAll('.pl').forEach(l=>l.addEventListener('click',()=>{
+  hbtn.classList.remove('o');panel.classList.remove('o');
+  hbtn.setAttribute('aria-expanded','false');document.body.style.overflow='';
+}));
+</script>
+</body>
+</html>
